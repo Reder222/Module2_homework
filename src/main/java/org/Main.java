@@ -1,13 +1,20 @@
 package org;
 
 
-import org.DAOs.UserDAO;
-import org.dataClasses.UserData;
+
+import org.ConsoleApplication.ConsoleDatabaseApplication;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
 
-        UserDAO userDAO = new UserDAO();
+      ConsoleDatabaseApplication app = new ConsoleDatabaseApplication();
+        app.run();
+
 
 
     }

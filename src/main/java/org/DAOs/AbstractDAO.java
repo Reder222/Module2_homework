@@ -6,10 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.sessionUtil.SessionUtil;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public abstract class AbstractDAO<C> {
     private final SessionFactory sessionFactory;
@@ -27,9 +24,13 @@ public abstract class AbstractDAO<C> {
     //CRUD
 
     public void create(C entity) {
-        sessionFactory.inTransaction(session -> {
-            session.persist(entity);
-        });
+        try {
+            sessionFactory.inTransaction(session -> {
+                session.persist(entity);
+            });
+        } catch (Exception e) {
+            return;
+        }
     }
 
     public C update(C entity) {
@@ -42,8 +43,17 @@ public abstract class AbstractDAO<C> {
 
     public List<C> findAll() {
 
-        return  sessionFactory.openSession().createQuery("from "+processedClass.getName()).list();
+        return sessionFactory.fromTransaction(session -> {
+            return session.createQuery("from " + processedClass.getName()).list();
+        });
+    }
 
+    public C findById(int id) {
+
+        Object object = sessionFactory.fromTransaction(session -> {
+            return session.find(processedClass, id);
+        });
+        return object == null ? null : processedClass.cast(object);
 
     }
 
