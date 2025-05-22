@@ -1,11 +1,11 @@
 package org.DAOs;
 
-import org.dataClasses.User;
+import org.dataClasses.UserData;
 
-public class UserDAO extends AbstractDAO<User> {
+public class UserDAO extends AbstractDAO<UserData> {
 
    public UserDAO() {
-        super(User.class);
+        super(UserData.class);
     }
 
 }

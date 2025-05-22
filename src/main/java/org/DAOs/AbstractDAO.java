@@ -7,7 +7,9 @@ import org.hibernate.Transaction;
 import org.sessionUtil.SessionUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public abstract class AbstractDAO<C> {
     private final SessionFactory sessionFactory;
@@ -31,13 +33,7 @@ public abstract class AbstractDAO<C> {
     }
 
     public C update(C entity) {
-        C oldData;
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        oldData = session.merge(entity);
-        transaction.commit();
-        session.close();
-        return oldData;
+        return sessionFactory.fromTransaction(session -> session.merge(entity));
     }
 
     public void delete(C entity) {
@@ -45,11 +41,10 @@ public abstract class AbstractDAO<C> {
     }
 
     public List<C> findAll() {
-        List<C> entities = new ArrayList<C>();
-        sessionFactory.inTransaction(session -> {
-            session.findMultiple(processedClass, entities);
-        });
-        return entities;
+
+        return  sessionFactory.openSession().createQuery("from "+processedClass.getName()).list();
+
+
     }
 
 }

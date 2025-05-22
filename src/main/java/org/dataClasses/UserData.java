@@ -2,14 +2,11 @@ package org.dataClasses;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
-@Table(name = "Users")
-public class User  {
+@Table(name = "UserData")
+public class UserData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -26,9 +23,9 @@ public class User  {
     @Column(name = "Registration_date", nullable = false)
     private LocalDate created_at;
 
-    public User(){
+    public UserData(){
     }
-    public User (String name, String email, int age){
+    public UserData(String name, String email, int age){
         this.name = name;
         this.email = email;
         this.age = age;
@@ -51,5 +48,10 @@ public class User  {
     }
     public int getAge() {
         return age;
+    }
+
+    @Override
+    public String toString() {
+        return "User: id=" + id + ", name=" + name + ", email=" + email + ", age=" + age;
     }
 }

@@ -2,7 +2,6 @@ package org.sessionUtil;
 
 
 
-import org.dataClasses.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -28,5 +27,11 @@ public class SessionUtil {
         }
         return sessionFactory;
     }
+
+    public static void closeSessionFactory() {
+        sessionFactory.close();
+        sessionFactory = null;
+    }
+
 
 }
