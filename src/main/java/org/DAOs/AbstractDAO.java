@@ -2,10 +2,7 @@ package org.DAOs;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import org.hibernate.Transaction;
 import org.sessionUtil.SessionUtil;
-
 import java.util.*;
 
 public abstract class AbstractDAO<C> {
@@ -28,13 +25,21 @@ public abstract class AbstractDAO<C> {
             sessionFactory.inTransaction(session -> {
                 session.persist(entity);
             });
-        } catch (Exception e) {
-            return;
+        }
+        catch (Exception e) {
+            System.out.println("Can`t persist new User. Probably email is already in use.");
         }
     }
 
     public C update(C entity) {
-        return sessionFactory.fromTransaction(session -> session.merge(entity));
+        try {
+            return sessionFactory.fromTransaction(session -> session.merge(entity));
+
+        }
+        catch (Exception e) {
+            System.out.println("Invalid changes");
+            return null;
+        }
     }
 
     public void delete(C entity) {

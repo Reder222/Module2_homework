@@ -1,7 +1,5 @@
 package org.ConsoleApplication;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.DAOs.AbstractDAO;
 import org.DAOs.UserDAO;
 import org.dataClasses.UserData;
 
@@ -91,27 +89,33 @@ public class ConsoleDatabaseApplication {
             return;
         }
 
-        showMessage("What do you want to do?" +
-                "1 Change name" +
-                "2 Change email" +
-                "3 Change age" +
-                "4 Exit" +
-                "Input a number: ");
+        showMessage("""
+                What do you want to do?
+                1 Change name
+                2 Change email
+                3 Change age
+                4 Exit
+                Input a number:""");
 
         try {
             switch (readInt()) {
                 case 1: {
+                    readLine();
+                    showMessage("Input name: ");
                     handledObject.setName(readLine());
                     break;
                 }
                 case 2: {
+                    readLine();
+                    showMessage("Input email: ");
                     handledObject.setEmail(readLine());
                     break;
                 }
                 case 3: {
+                    readLine();
+                    showMessage("Input age: ");
                     try {
-                        handledObject.setAge(Integer.parseInt(readLine()));
-
+                        handledObject.setAge(readInt());
                     } catch (Exception e) {
                         showError("Please enter a valid number");
                         readLine();

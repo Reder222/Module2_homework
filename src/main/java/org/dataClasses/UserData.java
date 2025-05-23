@@ -1,7 +1,6 @@
 package org.dataClasses;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
