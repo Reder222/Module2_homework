@@ -3,11 +3,12 @@ package org.DAOs;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.sessionUtil.SessionUtil;
+
 import java.util.*;
 
 public abstract class AbstractDAO<C> {
-    private final SessionFactory sessionFactory;
-    private final Class<C> processedClass;
+    protected final SessionFactory sessionFactory;
+    protected final Class<C> processedClass;
 
     AbstractDAO(Class<C> processedClass) {
         sessionFactory = SessionUtil.getSessionFactory();
@@ -21,29 +22,37 @@ public abstract class AbstractDAO<C> {
     //CRUD
 
     public void create(C entity) {
-        try {
-            sessionFactory.inTransaction(session -> {
-                session.persist(entity);
-            });
+        if (entity == null) {
+            return ;
         }
-        catch (Exception e) {
-            System.out.println("Can`t persist new User. Probably email is already in use.");
+        if (entity.getClass().isInstance(processedClass)) {
+            try {
+                sessionFactory.inTransaction(session -> {
+                    session.persist(entity);
+                });
+            } catch (Exception e) {
+            }
         }
+
     }
 
     public C update(C entity) {
-        try {
-            return sessionFactory.fromTransaction(session -> session.merge(entity));
-
-        }
-        catch (Exception e) {
-            System.out.println("Invalid changes");
+        if (entity == null) {
             return null;
         }
+        if (entity.getClass().isInstance(processedClass)) {
+            try {
+                return sessionFactory.fromTransaction(session -> session.merge(entity));
+            } catch (Exception e) {
+                System.out.println("Invalid changes");
+                return null;
+            }
+        }
+        return null;
     }
 
-    public void delete(C entity) {
-        sessionFactory.inTransaction(session -> session.remove(entity));
+    public void delete(int id) {
+        sessionFactory.inTransaction(session -> session.remove(findById(id)));
     }
 
     public List<C> findAll() {
@@ -61,5 +70,7 @@ public abstract class AbstractDAO<C> {
         return object == null ? null : processedClass.cast(object);
 
     }
+
+
 
 }

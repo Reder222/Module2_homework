@@ -8,4 +8,10 @@ public class UserDAO extends AbstractDAO<UserData> {
         super(UserData.class);
     }
 
+    public boolean containsEmail(String email) {
+        return sessionFactory.fromTransaction(session -> {
+            return session.find(processedClass, email);
+        }) != null;
+    }
+
 }

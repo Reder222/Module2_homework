@@ -1,42 +1,16 @@
 package org.ConsoleApplication;
 
-import org.DAOs.UserDAO;
-import org.dataClasses.UserData;
 
-import java.util.Scanner;
+import org.dataClasses.UserData;
 
 public class ConsoleDatabaseApplication {
 
-    UserDAO handledDAO;
-    Scanner scanner;
+    InputOutputController inputOutputController;
+    UserService userService;
 
-    public void showMessage(String message) {
-        System.out.println(message);
-    }
-
-    public void showError(String message) {
-        System.out.flush();
-        System.err.println(message);
-    }
-
-    public String readLine() {
-        try  {
-            return scanner.nextLine();
-        }
-        catch (Exception e) {
-            showError("Invalid input.");
-            return null;
-        }
-
-    }
-
-    public int readInt() {
-        try {
-            return scanner.nextInt();
-        } catch (Exception e) {
-            showError("Invalid input.");
-            return -1;
-        }
+    public ConsoleDatabaseApplication() {
+        inputOutputController = InputOutputController.getInstance();
+        userService = new UserService();
     }
 
     private void showInterface() {
@@ -54,42 +28,39 @@ public class ConsoleDatabaseApplication {
                 
                 Input a number:
                 """;
-        showMessage(str);
+        inputOutputController.showMessage(str);
     }
 
     private void createEntry() {
-        readLine();
-        showMessage("Input name: ");
-        String name = readLine();
-        showMessage("Input email: ");
-        String email = readLine();
-        showMessage("Input Age: ");
-        int age = readInt();
 
+        inputOutputController.showMessage("Input name: ");
+        String name = inputOutputController.readLine();
+        inputOutputController.showMessage("Input email: ");
+        String email = inputOutputController.readLine();
+        inputOutputController.showMessage("Input Age: ");
+        int age = inputOutputController.readInt();
 
-        handledDAO.create(new UserData(name, email, age));
-        showMessage("Entry created");
+        if (userService.create(name, email, age)) inputOutputController.showMessage("Entry created");
+        else inputOutputController.showMessage("Something went wrong");
     }
 
 
     private void readEntries() {
-        showMessage("All persistent entries:");
-        handledDAO.findAll().forEach(System.out::println);
-        readLine();
+        inputOutputController.showMessage("All persistent entries:");
+        userService.getAll().forEach(entry -> inputOutputController.showMessage(entry.toString()));
     }
 
     private void updateEntry() {
-        showMessage("Input id:");
-        int id = readInt();
+        inputOutputController.showMessage("Input id:");
+        int id = inputOutputController.readInt();
 
-        UserData handledObject = handledDAO.findById(id);
+        UserData handledObject = userService.getByID(id);
         if (handledObject == null) {
-            showError("Entry not found");
-            readLine();
+            inputOutputController.showError("Entry not found");
             return;
         }
 
-        showMessage("""
+        inputOutputController.showMessage("""
                 What do you want to do?
                 1 Change name
                 2 Change email
@@ -97,67 +68,48 @@ public class ConsoleDatabaseApplication {
                 4 Exit
                 Input a number:""");
 
-        try {
-            switch (readInt()) {
+        while (true)
+            switch (inputOutputController.readInt()) {
                 case 1: {
-                    readLine();
-                    showMessage("Input name: ");
-                    handledObject.setName(readLine());
+                    inputOutputController.showMessage("Input name: ");
+                    handledObject.setName(inputOutputController.readLine());
                     break;
                 }
                 case 2: {
-                    readLine();
-                    showMessage("Input email: ");
-                    handledObject.setEmail(readLine());
+                    inputOutputController.showMessage("Input email: ");
+                    handledObject.setEmail(inputOutputController.readLine());
                     break;
                 }
                 case 3: {
-                    readLine();
-                    showMessage("Input age: ");
-                    try {
-                        handledObject.setAge(readInt());
-                    } catch (Exception e) {
-                        showError("Please enter a valid number");
-                        readLine();
-                        return;
-                    }
+                    inputOutputController.showMessage("Input age: ");
+                    handledObject.setAge(inputOutputController.readInt());
                     break;
                 }
                 case 4: {
+                    userService.update(handledObject);
                     return;
                 }
                 default: {
-                    showError("Please enter a valid number");
-                    readLine();
-                    return;
-
+                    inputOutputController.showError("Please enter a valid number");
+                    break;
                 }
             }
 
-        } catch (Exception e) {
-            showError("Please enter a valid number");
-            readLine();
-            return;
-        }
-        handledDAO.update(handledObject);
 
     }
 
     private void deleteEntry() {
-        showMessage("Input id:");
-        int id = readInt();
+        inputOutputController.showMessage("Input id:");
+        int id = inputOutputController.readInt();
 
-        UserData handledObject = handledDAO.findById(id);
-        if (handledObject == null) {
-            showError("Entry not found");
-            readLine();
-            return;
-        }
-        handledDAO.delete(handledObject);
+        if (userService.delete(id)) {
+            inputOutputController.showMessage("Entry deleted");
+        } else inputOutputController.showMessage("Entry not found");
+
     }
 
     private void changeTable() {
-        showMessage("Not implemented yet");
+        inputOutputController.showMessage("Not implemented yet");
     }
 
     private void exit() {
@@ -165,12 +117,10 @@ public class ConsoleDatabaseApplication {
     }
 
     public void run() {
-        scanner = new Scanner(System.in);
-        handledDAO = new UserDAO();
         while (!Thread.interrupted()) {
             showInterface();
-            int choice = readInt();
-            switch (choice) {
+
+            switch (inputOutputController.readInt()) {
                 case 1: {
                     createEntry();
                     break;
@@ -196,13 +146,13 @@ public class ConsoleDatabaseApplication {
                     break;
                 }
                 default: {
-                    showError("Invalid command");
+                    inputOutputController.showError("Invalid command");
                     break;
                 }
             }
 
         }
-        scanner.close();
+        inputOutputController.close();
     }
 
 }
