@@ -2,6 +2,8 @@ package org.ConsoleApplication;
 
 import org.DAOs.UserDAO;
 import org.dataClasses.UserData;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -15,8 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    UserDAO userDAO = Mockito.mock(UserDAO.class);
-    UserService userService = new UserService(userDAO);
+    UserDAO userDAO;
+    UserService userService;
+
+    @BeforeEach
+    public void beforeEach() {
+        userDAO = Mockito.mock(UserDAO.class);
+        userService = new UserService(userDAO);
+    }
 
     @Test
     public void testAddUser() {
