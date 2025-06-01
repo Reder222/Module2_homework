@@ -15,6 +15,11 @@ public abstract class AbstractDAO<C> {
         this.processedClass = processedClass;
     }
 
+    AbstractDAO(Class<C> processedClass, SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+        this.processedClass = processedClass;
+    }
+
     protected Session getCurentSession() {
         return sessionFactory.getCurrentSession();
     }
@@ -60,6 +65,7 @@ public abstract class AbstractDAO<C> {
         return sessionFactory.fromTransaction(session -> {
             return session.createQuery("from " + processedClass.getName()).list();
         });
+
     }
 
     public C findById(int id) {

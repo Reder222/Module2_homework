@@ -51,9 +51,15 @@ public class UserData {
     public void setAge(int age) {
         this.age = age;
     }
+    public int getId() {return id;}
 
     @Override
     public String toString() {
         return "User: id=" + id + ", name=" + name + ", email=" + email + ", age=" + age;
+    }
+    public boolean equals (Object obj){
+        if (obj == this) return true;
+        if (!(obj instanceof UserData)) return false;
+        return id == ((UserData)obj).id;
     }
 }
