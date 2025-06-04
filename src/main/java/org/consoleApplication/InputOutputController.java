@@ -1,4 +1,4 @@
-package org.ConsoleApplication;
+package org.consoleApplication;
 
 import java.util.Scanner;
 
@@ -25,6 +25,11 @@ public class InputOutputController {
 
     public void showError(String message) {
         System.err.println(message);
+    }
+
+    public void emptyLine(){
+        showMessage("Press enter to continue");
+        readLine();
     }
 
     public String readLine() {

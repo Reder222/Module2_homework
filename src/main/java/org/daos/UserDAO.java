@@ -1,4 +1,4 @@
-package org.DAOs;
+package org.daos;
 
 import org.dataClasses.UserData;
 import org.hibernate.SessionFactory;

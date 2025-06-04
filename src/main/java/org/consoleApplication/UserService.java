@@ -1,6 +1,6 @@
-package org.ConsoleApplication;
+package org.consoleApplication;
 
-import org.DAOs.UserDAO;
+import org.daos.UserDAO;
 import org.dataClasses.UserData;
 
 import java.util.List;

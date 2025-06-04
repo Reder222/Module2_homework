@@ -1,6 +1,6 @@
 package org;
 
-import org.ConsoleApplication.ConsoleDatabaseApplication;
+import org.consoleApplication.ConsoleDatabaseApplication;
 
 
 public class Main {

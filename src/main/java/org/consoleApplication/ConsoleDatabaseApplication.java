@@ -1,4 +1,4 @@
-package org.ConsoleApplication;
+package org.consoleApplication;
 
 
 import org.dataClasses.UserData;
@@ -32,7 +32,7 @@ public class ConsoleDatabaseApplication {
     }
 
     private void createEntry() {
-
+        inputOutputController.emptyLine();
         inputOutputController.showMessage("Input name: ");
         String name = inputOutputController.readLine();
         inputOutputController.showMessage("Input email: ");
@@ -46,11 +46,13 @@ public class ConsoleDatabaseApplication {
 
 
     private void readEntries() {
+        inputOutputController.emptyLine();
         inputOutputController.showMessage("All persistent entries:");
         userService.getAll().forEach(entry -> inputOutputController.showMessage(entry.toString()));
     }
 
     private void updateEntry() {
+        inputOutputController.emptyLine();
         inputOutputController.showMessage("Input id:");
         int id = inputOutputController.readInt();
 
@@ -99,6 +101,7 @@ public class ConsoleDatabaseApplication {
     }
 
     private void deleteEntry() {
+        inputOutputController.emptyLine();
         inputOutputController.showMessage("Input id:");
         int id = inputOutputController.readInt();
 
@@ -109,6 +112,7 @@ public class ConsoleDatabaseApplication {
     }
 
     private void changeTable() {
+        inputOutputController.emptyLine();
         inputOutputController.showMessage("Not implemented yet");
     }
 
@@ -119,7 +123,6 @@ public class ConsoleDatabaseApplication {
     public void run() {
         while (!Thread.interrupted()) {
             showInterface();
-
             switch (inputOutputController.readInt()) {
                 case 1: {
                     createEntry();

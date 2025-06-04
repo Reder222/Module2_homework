@@ -1,8 +1,7 @@
-package org.ConsoleApplication;
+package org.consoleApplication;
 
-import org.DAOs.UserDAO;
+import org.daos.UserDAO;
 import org.dataClasses.UserData;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
