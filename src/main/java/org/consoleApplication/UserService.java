@@ -16,22 +16,22 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public boolean create(String name, String email, int age) {
+    public String create(String name, String email, int age) {
         if (name == null || name.isEmpty()) {
-            return false;
+            return "Invalid name";
         }
         if (email == null || email.isEmpty()) {
-            return false;
+            return "Invalid email";
         }
         if (age <= 0) {
-            return false;
+            return "Invalid age";
         }
         if (userDAO.containsEmail(email)) {
-            return false;
+            return "Email already exists";
         }
         UserData temp = new UserData(name, email, age);
         userDAO.create(temp);
-        return true;
+        return "OK.";
     }
 
     public List<UserData> getAll() {

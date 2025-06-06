@@ -33,6 +33,7 @@ public class ConsoleDatabaseApplication {
 
     private void createEntry() {
         inputOutputController.emptyLine();
+
         inputOutputController.showMessage("Input name: ");
         String name = inputOutputController.readLine();
         inputOutputController.showMessage("Input email: ");
@@ -40,8 +41,8 @@ public class ConsoleDatabaseApplication {
         inputOutputController.showMessage("Input Age: ");
         int age = inputOutputController.readInt();
 
-        if (userService.create(name, email, age)) inputOutputController.showMessage("Entry created");
-        else inputOutputController.showMessage("Something went wrong");
+        inputOutputController.showMessage(userService.create(name, email, age));
+
     }
 
 
