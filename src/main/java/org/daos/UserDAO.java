@@ -21,8 +21,8 @@ public class UserDAO extends AbstractDAO<UserData> {
         {
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<UserData> cq = builder.createQuery(UserData.class);
-            cq.select(cq.from(UserData.class)).where(builder.equal(cq.from(UserData.class).get("email"),email));
-            return session.createQuery(cq) != null;
+            cq.select(cq.from(UserData.class)).where(builder.equal(cq.from(UserData.class).get("email"), email));
+            return !session.createQuery(cq).list().isEmpty();
         });
 
     }
