@@ -1,16 +1,22 @@
-package org.consoleApplication;
+package org.application.consoleApplication;
 
 
-import org.dataClasses.UserData;
+import org.application.dataClasses.UserData;
+import org.application.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ConsoleDatabaseApplication {
 
     InputOutputController inputOutputController;
+
+    @Autowired
     UserService userService;
+
 
     public ConsoleDatabaseApplication() {
         inputOutputController = InputOutputController.getInstance();
-        userService = new UserService();
     }
 
     private void showInterface() {

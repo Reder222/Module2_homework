@@ -1,20 +1,19 @@
-package org.consoleApplication;
+package org.application.service;
 
-import org.daos.UserDAO;
-import org.dataClasses.UserData;
+import org.application.daos.UserDAO;
+import org.application.dataClasses.UserData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class UserService {
-    private final UserDAO userDAO;
 
-    public UserService() {
-        userDAO = new UserDAO();
-    }
 
-    public UserService(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
+    @Autowired
+    private UserDAO userDAO;
+
 
     public String create(String name, String email, int age) {
         if (name == null || name.isEmpty()) {
@@ -46,7 +45,7 @@ public class UserService {
         if (user.getName() == null || user.getName().isEmpty()) {
             return null;
         }
-        if(user.getEmail() == null || user.getEmail().isEmpty()) {
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
             return null;
         }
         if (user.getAge() <= 0) {

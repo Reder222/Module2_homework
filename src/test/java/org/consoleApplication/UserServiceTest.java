@@ -1,11 +1,11 @@
 package org.consoleApplication;
 
-import org.daos.UserDAO;
-import org.dataClasses.UserData;
+import org.application.daos.UserDAO;
+import org.application.dataClasses.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
+import org.application.service.UserService;
 
 
 import java.util.ArrayList;

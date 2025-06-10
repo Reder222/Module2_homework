@@ -1,4 +1,4 @@
-package org.dataClasses;
+package org.application.dataClasses;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
