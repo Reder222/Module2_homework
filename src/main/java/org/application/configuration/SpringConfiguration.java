@@ -1,6 +1,11 @@
 package org.application.configuration;
 
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.application.consoleApplication.InputOutputController;
+import org.hibernate.validator.internal.engine.ValidatorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,13 +14,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 
 
 import javax.sql.DataSource;
@@ -72,4 +77,20 @@ public class SpringConfiguration {
     }
 
 
+    @Bean
+    public ValidatorFactory validatorFactory() {
+        return Validation.buildDefaultValidatorFactory();
+    }
+
+    @Bean
+    public Validator validator() {
+        return validatorFactory().getValidator();
+    }
+
+    @Bean
+    public InputOutputController inputOutputController() {
+        return InputOutputController.getInstance();
+    }
+
 }
+

@@ -30,6 +30,7 @@ public class InputOutputController {
     public void emptyLine(){
         showMessage("Press enter to continue");
         readLine();
+        readLine();
     }
 
     public String readLine() {
@@ -57,4 +58,5 @@ public class InputOutputController {
         scanner.close();
         inputOutputController = null;
     }
+
 }

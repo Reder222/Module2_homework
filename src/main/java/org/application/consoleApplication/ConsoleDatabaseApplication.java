@@ -1,15 +1,19 @@
 package org.application.consoleApplication;
 
 
+import jakarta.validation.Validator;
 import org.application.dataClasses.UserData;
+import org.application.dto.UserDTO;
 import org.application.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 
 @Controller
 public class ConsoleDatabaseApplication {
 
+    @Autowired
     InputOutputController inputOutputController;
 
     @Autowired
@@ -17,7 +21,7 @@ public class ConsoleDatabaseApplication {
 
 
     public ConsoleDatabaseApplication() {
-        inputOutputController = InputOutputController.getInstance();
+
     }
 
     private void showInterface() {
@@ -48,7 +52,7 @@ public class ConsoleDatabaseApplication {
         inputOutputController.showMessage("Input Age: ");
         int age = inputOutputController.readInt();
 
-        inputOutputController.showMessage(userService.create(name, email, age));
+        inputOutputController.showMessage(userService.create(email, name, age));
 
     }
 
@@ -63,40 +67,51 @@ public class ConsoleDatabaseApplication {
         inputOutputController.emptyLine();
         inputOutputController.showMessage("Input id:");
         int id = inputOutputController.readInt();
+        UserDTO handledObject = userService.getByID(id);
 
-        UserData handledObject = userService.getByID(id);
         if (handledObject == null) {
             inputOutputController.showError("Entry not found");
             return;
         }
+
+        inputOutputController.showMessage(handledObject.toString());
 
         inputOutputController.showMessage("""
                 What do you want to do?
                 1 Change name
                 2 Change email
                 3 Change age
-                4 Exit
+                4 Update and exit
                 Input a number:""");
 
         while (true)
             switch (inputOutputController.readInt()) {
                 case 1: {
+                    inputOutputController.emptyLine();
                     inputOutputController.showMessage("Input name: ");
-                    handledObject.setName(inputOutputController.readLine());
+                    String name = inputOutputController.readLine();
+                    handledObject.setName(name);
                     break;
                 }
                 case 2: {
+                    inputOutputController.emptyLine();
                     inputOutputController.showMessage("Input email: ");
-                    handledObject.setEmail(inputOutputController.readLine());
+                    String email = inputOutputController.readLine();
+                    handledObject.setEmail(email);
                     break;
                 }
                 case 3: {
+                    inputOutputController.emptyLine();
                     inputOutputController.showMessage("Input age: ");
-                    handledObject.setAge(inputOutputController.readInt());
+                    int age = inputOutputController.readInt();
+                    handledObject.setAge(age);
                     break;
                 }
                 case 4: {
-                    userService.update(handledObject);
+
+                    inputOutputController.showMessage(userService.update(handledObject));
+
+                    inputOutputController.emptyLine();
                     return;
                 }
                 default: {
@@ -113,10 +128,7 @@ public class ConsoleDatabaseApplication {
         inputOutputController.showMessage("Input id:");
         int id = inputOutputController.readInt();
 
-        if (userService.delete(id)) {
-            inputOutputController.showMessage("Entry deleted");
-        } else inputOutputController.showMessage("Entry not found");
-
+        userService.delete(id);
     }
 
     private void changeTable() {
@@ -163,7 +175,7 @@ public class ConsoleDatabaseApplication {
             }
 
         }
-        inputOutputController.close();
+
     }
 
 }

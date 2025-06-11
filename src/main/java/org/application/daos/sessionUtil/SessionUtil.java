@@ -1,4 +1,4 @@
-package org.application.sessionUtil;
+package org.application.daos.sessionUtil;
 
 import org.application.dataClasses.UserData;
 import org.hibernate.SessionFactory;
