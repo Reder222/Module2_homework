@@ -4,9 +4,10 @@ package org.application.consoleApplication;
 import org.application.dataClasses.UserData;
 import org.application.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+import org.springframework.stereotype.Controller;
+
+@Controller
 public class ConsoleDatabaseApplication {
 
     InputOutputController inputOutputController;
