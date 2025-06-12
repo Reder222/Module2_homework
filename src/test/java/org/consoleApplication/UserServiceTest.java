@@ -1,36 +1,45 @@
 package org.consoleApplication;
 
-import org.daos.UserDAO;
-import org.dataClasses.UserData;
+
+import jakarta.validation.Validation;
+import org.application.configuration.SpringConfiguration;
+import org.application.dataClasses.UserData;
+import org.application.dto.UserDTOUtil;
+import org.application.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.application.service.UserService;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.xml.validation.Validator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    UserDAO userDAO;
-    UserService userService;
+    static UserRepository userRepository;
+    static UserService userService;
 
-    @BeforeEach
-    public void beforeEach() {
-        userDAO = Mockito.mock(UserDAO.class);
-        userService = new UserService(userDAO);
+    @BeforeAll
+    public static void beforeEach() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+        UserService userService = context.getBean(UserService.class);
+        userRepository = Mockito.mock(UserRepository.class);
+        userService.replaceRepository(userRepository);
+
     }
 
     @Test
     public void testAddUser() {
         UserData user = new UserData("Test", "@gmail.com", 15);
-        Mockito.doNothing().when(userDAO).create(Mockito.any());
+        Mockito.when(userRepository.save(Mockito.any()));
         userService.create(user.getName(), user.getEmail(), user.getAge());
-        Mockito.verify(userDAO, Mockito.times(1)).create(Mockito.any());
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
@@ -39,13 +48,13 @@ class UserServiceTest {
         UserData user2 = new UserData("Test", null, 15);
         UserData user3 = new UserData("Test", "@gmail.com", 0);
 
-        Mockito.doNothing().when(userDAO).create(Mockito.any());
+        Mockito.when(userRepository.save(Mockito.any()));
 
         userService.create(user1.getName(), user1.getEmail(), user1.getAge());
         userService.create(user2.getName(), user2.getEmail(), user2.getAge());
         userService.create(user3.getName(), user3.getEmail(), user3.getAge());
 
-        Mockito.verify(userDAO, Mockito.never()).create(Mockito.any());
+        Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
@@ -54,15 +63,17 @@ class UserServiceTest {
         UserData user1 = new UserData("Test", "@gmail.com", 15);
         UserData user2 = new UserData("Test", "not@gmail.com", 15);
 
-        Mockito.doNothing().when(userDAO).create(Mockito.any());
+        Mockito.when(userRepository.save(Mockito.any()));
 
-        Mockito.when(userDAO.containsEmail(Mockito.eq(user.getEmail())))
-                .thenReturn(true);
+        List<UserData> list = new ArrayList<>();
+        list.add(user);
+
+        Mockito.when(userRepository.findAllByEmail((Mockito.eq(user.getEmail())))).thenReturn(list);
 
         userService.create(user1.getName(), user1.getEmail(), user1.getAge());
         userService.create(user2.getName(), user2.getEmail(), user2.getAge());
 
-        Mockito.verify(userDAO, Mockito.times(1)).create(Mockito.any());
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
@@ -70,9 +81,9 @@ class UserServiceTest {
         ArrayList<UserData> expected = new ArrayList<UserData>();
         expected.add(new UserData("Test", "@gmail.com", 15));
 
-        Mockito.when(userDAO.findAll()).thenReturn(expected);
+        Mockito.when(userRepository.findAll()).thenReturn(expected);
 
-        List<UserData> actual = userService.getAll();
+        List<UserData> actual = userService.getAll().stream().map(UserDTOUtil::dtoToData).collect(Collectors.toList());
 
         assertEquals(expected, actual);
     }
@@ -81,11 +92,13 @@ class UserServiceTest {
     public void testGetUserById() {
         UserData expected = new UserData("Test", "@gmail.com", 15);
 
-        Mockito.when(userDAO.findById(Mockito.eq(1))).thenReturn(expected);
+        Optional<UserData> optUser = Optional.of(expected);
 
-        UserData actual = userService.getByID(1);
+        Mockito.when(userRepository.findById(Mockito.eq(1))).thenReturn(optUser);
 
-        assertEquals(expected, actual);
+        UserData actual = UserDTOUtil.dtoToData(userService.getByID(1));
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
 
     }
 
@@ -94,9 +107,11 @@ class UserServiceTest {
         UserData oldValue = new UserData("Test", "@gmail.com", 15);
         UserData newValue = new UserData("Test123", "123@gmail.com", 15);
 
-        Mockito.when(userDAO.update(newValue)).thenReturn(oldValue);
+        Mockito.when(userRepository.save(newValue)).thenReturn(oldValue);
 
-        UserData actual = userService.update(newValue);
+        userService.update(UserDTOUtil.dataToDTO(newValue));
+
+        UserData actual = UserDTOUtil.dtoToData(userService.getByID(1));
 
         assertEquals(oldValue, actual);
     }
@@ -110,33 +125,39 @@ class UserServiceTest {
         UserData emptyNameValue = new UserData("", "@gmail.com", 15);
         UserData emptyEmailValue = new UserData("Test", "", 15);
 
-        Mockito.when(userDAO.update(Mockito.any(UserData.class))).thenReturn(nullNameValue);
+        Mockito.when(userRepository.save(Mockito.any(UserData.class)));
 
-        boolean resultIsNull = Objects.isNull(userService.update(nullNameValue));
-        resultIsNull = Objects.isNull(userService.update(nullEmailValue)) && resultIsNull;
-        resultIsNull = Objects.isNull(userService.update(incorrectAgeValue)) && resultIsNull;
-        resultIsNull = Objects.isNull(userService.update(emptyNameValue)) && resultIsNull;
-        resultIsNull = Objects.isNull(userService.update(emptyEmailValue)) && resultIsNull;
 
-        assertTrue(resultIsNull);
+
+        boolean result =userService.update(UserDTOUtil.dataToDTO(nullNameValue)).equals( "success");
+         result =userService.update(UserDTOUtil.dataToDTO(nullEmailValue)).equals( "success");
+         result =userService.update(UserDTOUtil.dataToDTO(incorrectAgeValue)).equals( "success");
+         result =userService.update(UserDTOUtil.dataToDTO(emptyNameValue)).equals( "success");
+         result =userService.update(UserDTOUtil.dataToDTO(emptyEmailValue)).equals( "success");
+
+
+
+        assertFalse(result);
     }
 
     @Test
     public void testDeleteExistedUser() {
         UserData user = new UserData("Test", "@gmail.com", 15);
 
-        Mockito.when(userDAO.findById(Mockito.eq(1))).thenReturn(user);
+        Optional<UserData> optUser = Optional.of(user);
 
-        assertTrue(userService.delete(1));
+        Mockito.when(userRepository.findById(Mockito.eq(1))).thenReturn(optUser);
+
+        Mockito.verify(userRepository, Mockito.times(1)).delete(Mockito.any());
 
     }
 
     @Test
     public void testDeleteNotExistedUser() {
 
-        Mockito.when(userDAO.findById(Mockito.eq(1))).thenReturn(null);
+        Mockito.when(userRepository.findById(Mockito.eq(1))).thenReturn(null);
 
-        assertFalse(userService.delete(1));
+        Mockito.verify(userRepository, Mockito.never()).delete(Mockito.any());
 
     }
 

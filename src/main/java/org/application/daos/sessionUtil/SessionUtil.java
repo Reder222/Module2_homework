@@ -1,7 +1,6 @@
-package org.sessionUtil;
+package org.application.daos.sessionUtil;
 
-
-
+import org.application.dataClasses.UserData;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -17,7 +16,7 @@ public class SessionUtil {
         if (sessionFactory == null) {
             try {
                 sessionFactory = new Configuration()
-                        .configure()
+                        .addAnnotatedClass(UserData.class)
                         .buildSessionFactory();
             } catch (Exception e) {
                 e.printStackTrace();

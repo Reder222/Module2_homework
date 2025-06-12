@@ -1,26 +1,29 @@
-package org.daos;
+package org.application.daos;
 
 import jakarta.persistence.criteria.CriteriaQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.sessionUtil.SessionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public abstract class AbstractDAO<C> {
+
+
     protected final SessionFactory sessionFactory;
+
     protected final Class<C> processedClass;
 
-    AbstractDAO(Class<C> processedClass) {
-        sessionFactory = SessionUtil.getSessionFactory();
+
+    @Autowired
+    AbstractDAO(Class<C> processedClass, SessionFactory sessionFactory) {
         this.processedClass = processedClass;
+        this.sessionFactory = sessionFactory;
     }
 
-    AbstractDAO(Class<C> processedClass, SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-        this.processedClass = processedClass;
-    }
 
     protected Session getCurentSession() {
         return sessionFactory.getCurrentSession();
