@@ -26,6 +26,9 @@ public class UserService {
     @Autowired
     Validator validator;
 
+    public void replaceRepository (UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Transactional
     public String create(String name, String email, int age) {
